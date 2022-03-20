@@ -70,7 +70,6 @@ export class BehaviorObserver {
 
   private _globalClickHandler(e: MouseEvent) {
     const target = e.target;
-
     if (target instanceof HTMLElement) {
       const eleClass = target.className;
       const classPath = this.getElePath(target);
