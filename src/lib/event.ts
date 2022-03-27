@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { TrackerEvents } from "../types";
-import { isObject, getPageUrl, getUvLabel, getUserSessionLabel } from "./util";
+import { isObject, getPageUrl } from "./util";
 
 export class MyEmitter extends EventEmitter {
   private globalData: any;
@@ -12,8 +12,8 @@ export class MyEmitter extends EventEmitter {
 
   public customEmit(event: string | symbol, ...args: any[]): boolean {
     const [data, ...rest] = args;
-
     if (!isObject(data)) {
+      super.emit(TrackerEvents.event, event, data, ...rest);
       return super.emit(event, ...args);
     }
 
@@ -35,7 +35,7 @@ export class MyEmitter extends EventEmitter {
         ...data,
         beforeEmit: (data: any) => {
           this.decorateData(data);
-        }
+        },
       },
       ...rest
     );
@@ -58,14 +58,6 @@ export class MyEmitter extends EventEmitter {
         document.referrer && document.referrer !== location.href
           ? document.referrer
           : "";
-    }
-
-    if (!data.uvLabel) {
-      data.uvLabel = getUvLabel();
-    }
-
-    if (!data.userLabel) {
-      data.userLabel = getUserSessionLabel();
     }
   }
 

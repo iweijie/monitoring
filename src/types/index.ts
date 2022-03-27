@@ -4,7 +4,6 @@ export enum TrackerEvents {
   unHandleRejection = "unHandleRejection",
   resourceError = "resourceError",
   reqError = "reqError",
-  vuejsError = "vuejsError",
   batchErrors = "batchErrors",
 
   performanceInfoReady = "performanceInfoReady",
@@ -12,6 +11,9 @@ export enum TrackerEvents {
   reqEnd = "reqEnd",
   mouseTrack = "mouseTrack",
   event = "event",
+
+
+  behaviorsClick = "BehaviorsClick",
 
   /* SDK inner events */
   _clickEle = "_clickEle",
@@ -49,7 +51,6 @@ export interface IHttpReqErrorRes extends BaseError {
 }
 
 export enum ErrorType {
-  vueJsError = "vuejsError",
   jsError = "jsError",
   unHandleRejectionError = "unHandleRejectionError",
   resourceError = "resourceError",

@@ -1,17 +1,14 @@
 import merge from "deepmerge";
-import { VueConstructor } from "vue";
 import { myEmitter } from "./event";
 import { ErrorObserver } from "./errorObserver";
-import { ISimpleVueError, IVueError } from "./vueErrorObserver";
 import { AjaxInterceptor } from "./ajaxInterceptor";
-import { VueErrorObserver } from "./vueErrorObserver";
 import { FetchInterceptor } from "./fetchInterceptor";
 import { IPerformanceInfo, PerformanceObserver } from "./performance";
 import {
   BehaviorCombine,
   BehaviorObserver,
-  IClickBehavior,
-  IConsoleBehavior,
+  // IClickBehavior,
+  // IConsoleBehavior,
 } from "./behaviorObserver";
 import { getDeviceInfo } from "./device";
 import { Reporter } from "./report";
@@ -21,12 +18,7 @@ import packageJson from "../../package.json";
 import { SpaHandler } from "./spaHandler";
 import { IError, IUnHandleRejectionError } from "./baseErrorObserver";
 
-export type ErrorCombine =
-  | IError
-  | ISimpleVueError
-  | IVueError
-  | IUnHandleRejectionError
-  | IHttpReqErrorRes;
+export type ErrorCombine = IError | IUnHandleRejectionError | IHttpReqErrorRes;
 
 export enum Env {
   Dev = "dev",
@@ -169,7 +161,7 @@ export class Monitor {
 
     this.initGlobalData();
     this.initInstances();
-    this.initEventListeners();
+    // this.initEventListeners();
   }
 
   /**
@@ -277,15 +269,9 @@ export class Monitor {
   }
 
   private listenBehaviors() {
-    myEmitter.on(TrackerEvents._console, (behavior: IConsoleBehavior) => {
-      this.pushBehavior(behavior);
-      this.configData("_behavior", this.behaviorQueue, false);
-    });
-
-    myEmitter.on(TrackerEvents._clickEle, (behavior: IClickBehavior) => {
-      this.pushBehavior(behavior);
-      this.configData("_behavior", this.behaviorQueue, false);
-    });
+    // myEmitter.on(TrackerEvents._clickEle, (behavior: IClickBehavior) => {
+    //   myEmitter.emit(TrackerEvents.behaviorsClick, behavior);
+    // });
   }
 
   private listenPerformanceInfo() {
@@ -371,7 +357,6 @@ export class Monitor {
   private initEventListeners(): void {
     const errorEvents = [
       TrackerEvents.jsError,
-      TrackerEvents.vuejsError,
       TrackerEvents.unHandleRejection,
       TrackerEvents.resourceError,
       TrackerEvents.reqError,
@@ -448,9 +433,5 @@ export class Monitor {
 
   emit(event: EventName, ...args: any[]): boolean {
     return myEmitter.emitWithGlobalData(event, ...args);
-  }
-
-  useVueErrorListener(Vue: VueConstructor) {
-    new VueErrorObserver(Vue, this.$options);
   }
 }
