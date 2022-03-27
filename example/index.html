@@ -11,13 +11,15 @@
 
 <body>
   <div id="app">
+    
+    <div>
+      <p>自定义属性上报</p>
+      <div :data-report="d"  @click="onCustomClick">{{d}}</div>
+    </div>
     <section>
       <h2>setting（Need to refresh page）</h2>
       <div>
         <el-form ref="form" :model="setting" label-width="200px">
-          <el-form-item label="rrweb switch">
-            <el-switch v-model="setting.rrweb"></el-switch>
-          </el-form-item>
           <el-form-item label="performance switch">
             <el-switch v-model="setting.performance"></el-switch>
           </el-form-item>
@@ -77,8 +79,6 @@
   <script src="/dist/index.umd.js"></script>
 
   <script>
-    // const isRRweb = localStorage.getItem("rrweb") ? true : false;
-    // const isRRweb = true;
     const isPerformance = localStorage.getItem("performance") ? true : false;
     const monitor = FeMonitor.Monitor.init({
       error: {
@@ -86,9 +86,6 @@
       },
       behavior:{
         watch: true
-      },
-      rrweb: {
-        watch: isRRweb
       },
       performance: isPerformance
     });
@@ -113,19 +110,22 @@
       data() {
         return {
           setting: {
-            rrweb: isRRweb,
             performance: isPerformance
+          },
+          iweijie:{
+            data:1,
+            port:3001,
+            id:"iweijieFD"
           }
         };
       },
+      computed:{
+        d(){
+          console.log( JSON.stringify(this.iweijie) )
+          return JSON.stringify(this.iweijie) 
+        }
+      },
       watch: {
-        "setting.rrweb"(newVal) {
-          if (newVal) {
-            localStorage.setItem("rrweb", 1);
-          } else {
-            localStorage.removeItem("rrweb");
-          }
-        },
         "setting.performance"(newVal) {
           if (newVal) {
             localStorage.setItem("performance", 1);
@@ -180,6 +180,9 @@
           const script = document.createElement("script");
           script.setAttribute("src", "/js/undefined.js");
           document.body.appendChild(script);
+        },
+        onCustomClick() {
+          console.log("test")
         },
         onLoadCssError() {
           const link = document.createElement("link");
