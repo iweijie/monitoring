@@ -6,7 +6,7 @@ import stringify from "json-stringify-safe";
 import {
   BaseObserver,
   IError,
-  IUnHandleRejectionError
+  IUnHandleRejectionError,
 } from "./baseErrorObserver";
 
 export class ErrorObserver extends BaseObserver {
@@ -36,7 +36,7 @@ export class ErrorObserver extends BaseObserver {
         column,
         stackTrace: stringify(stackTrace),
         errorType: ErrorType.jsError,
-        context: this
+        context: this,
       };
 
       self.safeEmitError(msgText, TrackerEvents.jsError, errorObj);
@@ -53,7 +53,7 @@ export class ErrorObserver extends BaseObserver {
       const errorObj: IUnHandleRejectionError = {
         msg: errMsg,
         errorType: ErrorType.unHandleRejectionError,
-        context: this
+        context: this,
       };
 
       self.safeEmitError(errMsg, TrackerEvents.unHandleRejection, errorObj);
@@ -80,7 +80,7 @@ export class ErrorObserver extends BaseObserver {
         const errorObj: BaseError = {
           url,
           errorType: errorType,
-          context: this
+          context: this,
         };
 
         self.safeEmitError(

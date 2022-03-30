@@ -28,7 +28,7 @@ export class BehaviorObserver {
   static handle: any;
 
   constructor(options: ITrackerOptions) {
-    this._options = options;  
+    this._options = options;
   }
 
   init(): void {
@@ -72,8 +72,13 @@ export class BehaviorObserver {
   }
 
   private _globalClickHandler(e: MouseEvent) {
+    const { behavior } = this._options;
     const target = e.target;
-    if (target instanceof HTMLElement) {
+    if (
+      target instanceof HTMLElement &&
+      target.getAttribute &&
+      target.getAttribute(behavior?.listenAttr)
+    ) {
       const eleClass = target.className;
       const classPath = this.getElePath(target);
       const xpath = this.getXPathFromElement(target);

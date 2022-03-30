@@ -3,7 +3,7 @@ import {
   TrackerEvents,
   IReqEndRes,
   ErrorType,
-  IHttpReqErrorRes
+  IHttpReqErrorRes,
 } from "../types/index";
 import { myEmitter } from "./event";
 import { BaseObserver } from "./baseErrorObserver";
@@ -39,7 +39,7 @@ export class FetchInterceptor extends BaseObserver {
           const startTime: number = Date.now();
           const reqStartRes: IFetchReqStartRes = {
             url,
-            options
+            options,
           };
 
           if (!this._isUrlInIgnoreList) {
@@ -53,19 +53,20 @@ export class FetchInterceptor extends BaseObserver {
                 requestUrl: res.url,
                 requestMethod: this._method,
                 requestData: this._data,
-                response: res.json(),
+                response: res,
                 duration: Date.now() - startTime,
                 context: this,
-                status
+                status,
               };
 
               const errorType = ErrorType.httpRequestError;
+
               const reqErrorRes: IHttpReqErrorRes = {
                 requestMethod: this._method,
                 requestUrl: this._url,
                 requestData: this._data,
                 errorMsg: res.statusText,
-                errorType
+                errorType,
               };
 
               if (!this._isUrlInIgnoreList) {
@@ -89,7 +90,7 @@ export class FetchInterceptor extends BaseObserver {
                 requestUrl: this._url,
                 requestData: this._data,
                 errorMsg: e.message,
-                errorType
+                errorType,
               };
 
               if (!this._isUrlInIgnoreList) {
@@ -99,9 +100,13 @@ export class FetchInterceptor extends BaseObserver {
                   reqErrorRes
                 );
               }
+            })
+            .then((data) => {
+              console.log(data);
+              return data;
             });
         };
-      }
+      },
     });
   }
 }

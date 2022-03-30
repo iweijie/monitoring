@@ -53,6 +53,7 @@ export interface IBehaviorOption {
   console: ConsoleType[];
   click: boolean;
   queueLimit: number;
+  listenAttr: string;
 }
 
 export interface IHookBeforeSend {
@@ -114,6 +115,7 @@ export const defaultTrackerOptions = {
     console: [ConsoleType.error],
     click: true,
     queueLimit: 20,
+    listenAttr: "data-report",
   },
   isSpa: true,
 };

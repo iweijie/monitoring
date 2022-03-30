@@ -3,7 +3,7 @@ import {
   TrackerEvents,
   IReqEndRes,
   IHttpReqErrorRes,
-  ErrorType
+  ErrorType,
 } from "../types/index";
 import { myEmitter } from "./event";
 import { BaseObserver } from "./baseErrorObserver";
@@ -35,7 +35,7 @@ export class AjaxInterceptor extends BaseObserver {
       this._isUrlInIgnoreList = self.isUrlInIgnoreList(this._url);
 
       const reqStartRes: IAjaxReqStartRes = {
-        context: this
+        context: this,
       };
 
       if (!this._isUrlInIgnoreList) {
@@ -67,7 +67,7 @@ export class AjaxInterceptor extends BaseObserver {
               requestUrl: this.responseURL,
               response: this.response,
               context: this,
-              status: this.status
+              status: this.status,
             };
 
             myEmitter.emitWithGlobalData(TrackerEvents.reqEnd, reqEndRes);
@@ -79,7 +79,7 @@ export class AjaxInterceptor extends BaseObserver {
               requestData,
               errorType: ErrorType.httpRequestError,
               context: this,
-              status: this.status
+              status: this.status,
             };
 
             // If http error url match reportUrl, don't emit event

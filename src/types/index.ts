@@ -12,7 +12,6 @@ export enum TrackerEvents {
   mouseTrack = "mouseTrack",
   event = "event",
 
-
   behaviorsClick = "BehaviorsClick",
 
   /* SDK inner events */
@@ -22,13 +21,13 @@ export enum TrackerEvents {
   _offConsoleTrack = "_offConsoleTrack",
   _mouseTrack = "_mouseTrack",
   _initOptions = "_initOptions",
-  _globalDataChange = "_globalDataChange"
+  _globalDataChange = "_globalDataChange",
 }
 
 export interface IReqEndRes {
   duration?: number;
   requestUrl?: string;
-  response?: string | Promise<string>;
+  response?: Response;
   context?: any;
   requestMethod?: string;
   requestData?: any;
@@ -54,5 +53,5 @@ export enum ErrorType {
   jsError = "jsError",
   unHandleRejectionError = "unHandleRejectionError",
   resourceError = "resourceError",
-  httpRequestError = "httpError"
+  httpRequestError = "httpError",
 }
