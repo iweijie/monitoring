@@ -100,10 +100,6 @@ export class FetchInterceptor extends BaseObserver {
                   reqErrorRes
                 );
               }
-            })
-            .then((data) => {
-              console.log(data);
-              return data;
             });
         };
       },
