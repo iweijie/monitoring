@@ -55,3 +55,11 @@ export function get<T = any>(
     return defaultValue;
   }
 }
+
+export const jsonStringifySafe = (data: any): string => {
+  try {
+    return JSON.stringify(data);
+  } catch (err) {
+    return "";
+  }
+};

@@ -4,14 +4,7 @@ import { ErrorObserver } from "./errorObserver";
 import { AjaxInterceptor } from "./ajaxInterceptor";
 import { FetchInterceptor } from "./fetchInterceptor";
 import { IPerformanceInfo, PerformanceObserver } from "./performance";
-import {
-  BehaviorCombine,
-  BehaviorObserver,
-  // IClickBehavior,
-  // IConsoleBehavior,
-} from "./behaviorObserver";
-import { getDeviceInfo } from "./device";
-import { Reporter } from "./report";
+import { BehaviorCombine, BehaviorObserver } from "./behaviorObserver";
 import { TrackerEvents, IHttpReqErrorRes } from "../types";
 import { isObject, getNetworkType, getLocaleLanguage } from "./util";
 import packageJson from "../../package.json";
@@ -137,8 +130,6 @@ export class Monitor {
 
   public behaviorObserver: BehaviorObserver;
 
-  public reporter: Reporter;
-
   public sdkVersion: string;
 
   public errorQueue: ErrorCombine[] = [];
@@ -156,14 +147,12 @@ export class Monitor {
   constructor(options: Partial<ITrackerOptions> | undefined) {
     this.initOptions(options);
 
-    this.getDeviceInfo();
     this.getNetworkType();
     this.getLocaleLanguage();
     this.getUserAgent();
 
     this.initGlobalData();
     this.initInstances();
-    // this.initEventListeners();
   }
 
   /**
@@ -176,17 +165,6 @@ export class Monitor {
     }
 
     return this.instance;
-  }
-
-  /**
-   * 获取设备信息
-   */
-  getDeviceInfo(): void {
-    const deviceInfo = getDeviceInfo();
-
-    this.configData({
-      _deviceInfo: deviceInfo,
-    });
   }
 
   getNetworkType(): void {
@@ -230,8 +208,6 @@ export class Monitor {
    * Inject instances and init
    */
   initInstances(): void {
-    this.reporter = new Reporter(this.$options);
-
     if (this.$options.error.watch) {
       this.errObserver = new ErrorObserver(this.$options);
       this.errObserver.init();
@@ -254,7 +230,6 @@ export class Monitor {
     }
 
     if (this.$options.behavior.watch) {
-      this.listenBehaviors();
       this.behaviorObserver = new BehaviorObserver(this.$options);
       this.behaviorObserver.init();
     }
@@ -270,12 +245,6 @@ export class Monitor {
     }
   }
 
-  private listenBehaviors() {
-    // myEmitter.on(TrackerEvents._clickEle, (behavior: IClickBehavior) => {
-    //   myEmitter.emit(TrackerEvents.behaviorsClick, behavior);
-    // });
-  }
-
   private listenPerformanceInfo() {
     myEmitter.on(
       TrackerEvents.performanceInfoReady,
@@ -283,14 +252,6 @@ export class Monitor {
         this.configData("_performance", performanceInfo, false);
       }
     );
-  }
-
-  private pushBehavior(behavior: BehaviorCombine) {
-    if (this.behaviorQueue.length >= this.$options.behavior.queueLimit) {
-      this.behaviorQueue.shift();
-    }
-
-    this.behaviorQueue.push(behavior);
   }
 
   /**
@@ -336,47 +297,6 @@ export class Monitor {
   ): void {
     this.$options = merge(this.$options, {
       [key]: value,
-    });
-  }
-
-  private handleErrorReport(): void {
-    if (this.errorQueueTimer) return;
-
-    this.errorQueueTimer = window.setTimeout(() => {
-      if (this.$options.report.url) {
-        this.reporter.reportErrors(this.errorQueue);
-      }
-
-      myEmitter.emitWithGlobalData(TrackerEvents.batchErrors, {
-        errorList: this.errorQueue,
-      });
-
-      this.errorQueueTimer = null;
-      this.errorQueue = [];
-    }, this.$options.error?.delay);
-  }
-
-  private initEventListeners(): void {
-    const errorEvents = [
-      TrackerEvents.jsError,
-      TrackerEvents.unHandleRejection,
-      TrackerEvents.resourceError,
-      TrackerEvents.reqError,
-    ];
-
-    errorEvents.forEach((eventName) => {
-      this.on(eventName, (error) => {
-        // Extract sample from all errors
-        const random = this.$options.error
-          ? this.$options.error?.random
-          : this.defaultOptions.error.random;
-        const isRandomIgnore = Math.random() >= random;
-
-        if (isRandomIgnore) return;
-
-        this.errorQueue.push(error);
-        this.handleErrorReport();
-      });
     });
   }
 

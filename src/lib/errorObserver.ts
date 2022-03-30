@@ -1,14 +1,12 @@
 import { ITrackerOptions } from "./monitor";
 import { TrackerEvents, BaseError, ErrorType } from "../types/index";
-import { myEmitter } from "./event";
 import ErrorStackParser from "error-stack-parser";
-import stringify from "json-stringify-safe";
+import { jsonStringifySafe as stringify } from "./util";
 import {
   BaseObserver,
   IError,
   IUnHandleRejectionError,
 } from "./baseErrorObserver";
-
 export class ErrorObserver extends BaseObserver {
   constructor(options: ITrackerOptions) {
     super(options);
@@ -88,8 +86,6 @@ export class ErrorObserver extends BaseObserver {
           TrackerEvents.resourceError,
           errorObj
         );
-
-        myEmitter.emitWithGlobalData(TrackerEvents.resourceError, errorObj);
       },
       true
     );

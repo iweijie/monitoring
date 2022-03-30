@@ -1,26 +1,12 @@
 {
-  "name": "femonitor-web",
-  "version": "1.4.2",
+  "name": "fxbaogao-monitor",
+  "version": "0.0.1",
   "description": "A web SDK for frontend error and performance monnitor",
-  "author": {
-    "name": "alex1504"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/alex1504/femonitor-web"
-  },
-  "license": "MIT",
   "main": "dist/index.umd.js",
   "types": "dist/src/index.d.ts",
   "files": [
     "dist",
     "src"
-  ],
-  "keywords": [
-    "error",
-    "performance",
-    "monitor",
-    "sdk"
   ],
   "scripts": {
     "clean": "shx rm -rf dist coverage .rpt2_cache",
@@ -38,15 +24,10 @@
     "test": "cross-env NODE_ENV=test jest"
   },
   "dependencies": {
-    "deepcopy": "^2.1.0",
     "deepmerge": "^4.2.2",
     "error-stack-parser": "^2.0.6",
     "events": "^3.3.0",
-    "json-stringify-safe": "^5.0.1",
-    "mobile-detect": "^1.4.5",
-    "object-to-formdata": "^4.4.1",
-    "query-string": "^7.0.0",
-    "tslib": "^2.3.1"
+    "json-stringify-safe": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -98,7 +79,8 @@
     "ts-node": "^9.1.1",
     "typescript": "^4.0.2",
     "webpack": "^4.44.1",
-    "webpack-espower-loader": "^2.0.0"
+    "webpack-espower-loader": "^2.0.0",
+    "tslib": "^2.3.1"
   },
   "husky": {
     "hooks": {

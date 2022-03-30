@@ -1,7 +1,7 @@
 import { ConsoleType, ITrackerOptions } from "./monitor";
 import { myEmitter } from "./event";
 import { TrackerEvents } from "../types";
-import stringify from "json-stringify-safe";
+import { jsonStringifySafe as stringify } from "./util";
 
 export type BehaviorCombine = IConsoleBehavior | IClickBehavior;
 
