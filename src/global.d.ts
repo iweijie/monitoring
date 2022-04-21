@@ -3,3 +3,7 @@ interface XMLHttpRequest {
   _method: string;
   _isUrlInIgnoreList: boolean;
 }
+
+interface Window {
+  DJObserver: any;
+}

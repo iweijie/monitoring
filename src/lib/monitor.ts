@@ -42,11 +42,11 @@ export enum ConsoleType {
   debug = "debug",
 }
 export interface IBehaviorOption {
-  watch: boolean;
-  console: ConsoleType[];
-  click: boolean;
-  queueLimit: number;
-  listenAttr: string;
+  watch?: boolean;
+  console?: ConsoleType[];
+  click?: boolean;
+  queueLimit?: number;
+  listenAttr?: string;
 }
 
 export interface IHookBeforeSend {
