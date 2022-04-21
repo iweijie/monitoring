@@ -6,4 +6,5 @@ interface XMLHttpRequest {
 
 interface Window {
   DJObserver: any;
+  DJMonitor: any;
 }

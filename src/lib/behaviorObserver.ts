@@ -77,7 +77,7 @@ export class BehaviorObserver {
     if (
       target instanceof HTMLElement &&
       target.getAttribute &&
-      target.getAttribute(behavior?.listenAttr)
+      target.getAttribute(behavior?.listenAttr || "")
     ) {
       const eleClass = target.className;
       const classPath = this.getElePath(target);

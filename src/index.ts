@@ -21,6 +21,7 @@ const monitor = Monitor.init({
 
 if (window) {
   window.DJObserver = observer;
+  window.DJMonitor = Monitor;
 }
 
 monitor.on("event", (...res) => {
