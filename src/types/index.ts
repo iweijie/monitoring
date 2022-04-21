@@ -10,6 +10,7 @@ export enum TrackerEvents {
   reqStart = "reqStart",
   reqEnd = "reqEnd",
   mouseTrack = "mouseTrack",
+  routerChange = "routerChange",
   event = "event",
 
   behaviorsClick = "BehaviorsClick",

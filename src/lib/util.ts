@@ -12,17 +12,6 @@ export function getNetworkType(): string {
     : "";
 }
 
-export function randomString(len?: number) {
-  len = len || 10;
-  const $chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789";
-  const maxPos = $chars.length;
-  let pwd = "";
-  for (let i = 0; i < len; i++) {
-    pwd = pwd + $chars.charAt(Math.floor(Math.random() * maxPos));
-  }
-  return pwd + new Date().getTime();
-}
-
 export function getLocaleLanguage() {
   if (navigator.languages != undefined) return navigator.languages[0];
   return navigator.language;

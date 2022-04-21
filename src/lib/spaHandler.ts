@@ -1,5 +1,5 @@
 import { myEmitter } from "./event";
-
+import { TrackerEvents } from "../types/index";
 export class SpaHandler {
   private static instance: SpaHandler;
 
@@ -16,10 +16,10 @@ export class SpaHandler {
     this.hackState("replaceState");
 
     window.addEventListener("hashchange", (...rest) => {
-      myEmitter.emit("_spaHashChange", ...rest);
+      myEmitter.customEmit(TrackerEvents.routerChange, ...rest);
     });
     window.addEventListener("historystatechanged", (...rest) => {
-      myEmitter.emit("_spaHashChange", ...rest);
+      myEmitter.customEmit(TrackerEvents.routerChange, ...rest);
     });
   }
 
@@ -27,7 +27,7 @@ export class SpaHandler {
     const func = window.history[fnName];
     if (typeof func === "function") {
       window.history[fnName] = function (...rest) {
-        myEmitter.emit("_spaHashChange", ...rest);
+        myEmitter.customEmit(TrackerEvents.routerChange, ...rest);
 
         return func.apply(this, rest);
       };

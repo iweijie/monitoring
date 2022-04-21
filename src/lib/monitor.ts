@@ -236,7 +236,7 @@ export class Monitor {
 
     if (this.$options.isSpa) {
       this.spaHandler = SpaHandler.init();
-      myEmitter.on("_spaHashChange", (...rest) => {
+      myEmitter.on(TrackerEvents.routerChange, (...rest) => {
         const [, , url] = rest;
         this.configData({
           _spaUrl: url,
