@@ -72,13 +72,8 @@ export class BehaviorObserver {
   }
 
   private _globalClickHandler(e: MouseEvent) {
-    const { behavior } = this._options;
     const target = e.target;
-    if (
-      target instanceof HTMLElement &&
-      target.getAttribute &&
-      target.getAttribute(behavior?.listenAttr || "")
-    ) {
+    if (target instanceof HTMLElement) {
       const eleClass = target.className;
       const classPath = this.getElePath(target);
       const xpath = this.getXPathFromElement(target);
@@ -94,6 +89,7 @@ export class BehaviorObserver {
       myEmitter.emitWithGlobalData(TrackerEvents.behaviorsClick, clickBehavior);
     }
   }
+
 
   private normalTarget(node: HTMLElement) {
     let t, n, r, a, i;

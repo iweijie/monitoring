@@ -12,7 +12,7 @@ export * from "./types/index";
 export default Monitor;
 
 const monitor = Monitor.init({
-  behavior: {
+  report: {
     watch: true,
   },
   performance: true,

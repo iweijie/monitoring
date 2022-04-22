@@ -57,12 +57,12 @@ export class BaseObserver {
    */
   isUrlInIgnoreList(url: string): boolean {
     const ignoreList = this._options.http.ignoreRules;
-    const reportUrl = this._options.report.url;
+    // const reportUrl = this._options.report.url;
 
-    // If reportUrl is setted, alse add to ignoreList
-    if (reportUrl) {
-      ignoreList.push(reportUrl);
-    }
+    // // If reportUrl is setted, alse add to ignoreList
+    // if (reportUrl) {
+    //   ignoreList.push(reportUrl);
+    // }
 
     return ignoreList.some((urlItem) => {
       if (typeof urlItem === "string") {

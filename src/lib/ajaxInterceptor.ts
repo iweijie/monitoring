@@ -83,13 +83,11 @@ export class AjaxInterceptor extends BaseObserver {
             };
 
             // If http error url match reportUrl, don't emit event
-            if (this._url !== self._options.report.url) {
-              self.safeEmitError(
-                `${errorType}: ${this._url}`,
-                TrackerEvents.reqError,
-                reqErrorObj
-              );
-            }
+            self.safeEmitError(
+              `${errorType}: ${this._url}`,
+              TrackerEvents.reqError,
+              reqErrorObj
+            );
           }
         }
       });

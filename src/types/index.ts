@@ -13,7 +13,9 @@ export enum TrackerEvents {
   routerChange = "routerChange",
   event = "event",
 
-  behaviorsClick = "BehaviorsClick",
+  behaviorsClick = "behaviorsClick",
+
+  reportClick = "reportClick",
 
   /* SDK inner events */
   _clickEle = "_clickEle",

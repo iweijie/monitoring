@@ -5,6 +5,7 @@ import { AjaxInterceptor } from "./ajaxInterceptor";
 import { FetchInterceptor } from "./fetchInterceptor";
 import { IPerformanceInfo, PerformanceObserver } from "./performance";
 import { BehaviorCombine, BehaviorObserver } from "./behaviorObserver";
+import { ReportObserver } from "./report";
 import { TrackerEvents, IHttpReqErrorRes } from "../types";
 import { isObject, getNetworkType, getLocaleLanguage } from "./util";
 import packageJson from "../../package.json";
@@ -53,10 +54,8 @@ export interface IHookBeforeSend {
   (data: ErrorCombine, eventName: ErrorCombine["errorType"]): ErrorCombine;
 }
 export interface ReportOptions {
-  url: string;
-  method: string;
-  contentType: string;
-  beforeSend: IHookBeforeSend;
+  watch: boolean;
+  listenAttr?: string;
 }
 
 export interface ITrackerOptions {
@@ -84,12 +83,6 @@ export type IData = Record<string | number | symbol, unknown>;
 
 export const defaultTrackerOptions = {
   env: Env.Dev,
-  report: {
-    url: "",
-    method: "POST",
-    contentType: "application/json",
-    beforeSend: (data: ErrorCombine) => data,
-  },
   data: {},
   error: {
     watch: true,
@@ -108,6 +101,9 @@ export const defaultTrackerOptions = {
     console: [ConsoleType.error],
     click: true,
     queueLimit: 20,
+  },
+  report: {
+    watch: false,
     listenAttr: "data-report",
   },
   isSpa: true,
@@ -129,6 +125,8 @@ export class Monitor {
   public spaHandler: SpaHandler;
 
   public behaviorObserver: BehaviorObserver;
+
+  public reportObserver: ReportObserver;
 
   public sdkVersion: string;
 
@@ -232,6 +230,11 @@ export class Monitor {
     if (this.$options.behavior.watch) {
       this.behaviorObserver = new BehaviorObserver(this.$options);
       this.behaviorObserver.init();
+    }
+
+    if (this.$options.report.watch) {
+      this.reportObserver = new ReportObserver(this.$options);
+      this.reportObserver.init();
     }
 
     if (this.$options.isSpa) {
