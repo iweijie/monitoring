@@ -15,7 +15,7 @@ export default class Observer {
   // 前置触发，也即在注册之前触发，可以不用担心顺序问题
   preEmit(type: string, payload: any) {
     if (!this.store[type]) {
-      if (this.payload[type]) {
+      if (!this.payload[type]) {
         this.payload[type] = [];
       }
       this.payload[type].push(payload);
