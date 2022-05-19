@@ -30,7 +30,7 @@ export class FetchInterceptor extends BaseObserver {
       configurable: true,
       enumerable: true,
       get() {
-        return (url: string, options: any = {}) => {
+        return function (this: any, url: string, options: any = {}) {
           this._url = url;
           this._method = options.method || "get";
           this._data = options.body;
@@ -101,7 +101,7 @@ export class FetchInterceptor extends BaseObserver {
                 );
               }
             });
-        };
+        }.bind({});
       },
     });
   }

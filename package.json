@@ -1,6 +1,6 @@
 {
   "name": "fxbaogao-monitor",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A web SDK for frontend error and performance monnitor",
   "main": "dist/index.umd.js",
   "types": "dist/src/index.d.ts",
