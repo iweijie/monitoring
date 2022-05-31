@@ -15,6 +15,11 @@ const monitor = Monitor.init({
   report: {
     watch: true,
   },
+  http: {
+    fetch: false,
+    ajax: true,
+    ignoreRules: [],
+  },
   performance: true,
   isSpa: true,
 });
