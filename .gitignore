@@ -76,3 +76,5 @@ jspm_packages/
 
 # Test server js
 server/*.js
+
+package-lock.json
