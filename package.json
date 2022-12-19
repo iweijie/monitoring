@@ -24,6 +24,9 @@
     "test": "cross-env NODE_ENV=test jest"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.19.6",
+    "@babel/runtime": "^7.20.6",
+    "core-js": "^3.26.1",
     "deepmerge": "^4.2.2",
     "error-stack-parser": "^2.0.6",
     "events": "^3.3.0",
