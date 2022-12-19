@@ -16,7 +16,7 @@ const monitor = Monitor.init({
     watch: true,
   },
   http: {
-    fetch: false,
+    fetch: true,
     ajax: true,
     ignoreRules: [],
   },

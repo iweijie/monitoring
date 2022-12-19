@@ -1,3 +1,4 @@
+const MAX_LENGTH = 100;
 export default class Observer {
   private store: any;
   private payload: any;
@@ -17,6 +18,9 @@ export default class Observer {
     if (!this.store[type]) {
       if (!this.payload[type]) {
         this.payload[type] = [];
+      }
+      if (this.payload[type].length >= MAX_LENGTH) {
+        this.payload[type].shift();
       }
       this.payload[type].push(payload);
       return;

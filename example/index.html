@@ -196,7 +196,13 @@
           fetch("/api/success");
         },
         onFetch404Error() {
-          fetch("/api/404");
+          fetch("/api/404", {
+            method:"post",
+            body:{
+              a:1,
+              b:2
+            }
+          });
         },
         onFetch500Error() {
           fetch("/api/500");

@@ -47,7 +47,7 @@ export interface BaseError {
 export interface IHttpReqErrorRes extends BaseError {
   requestMethod: string | undefined;
   requestUrl: string | undefined;
-  requestData: string | null;
+  requestData?: any;
   errorMsg?: string | undefined;
   status?: number;
 }

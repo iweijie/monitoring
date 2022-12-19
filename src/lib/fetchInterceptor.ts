@@ -26,83 +26,95 @@ export class FetchInterceptor extends BaseObserver {
     const self = this;
     const originFetch = fetch;
 
-    Object.defineProperty(window, "fetch", {
-      configurable: true,
-      enumerable: true,
-      get() {
-        return function (this: any, url: string, options: any = {}) {
-          this._url = url;
-          this._method = options.method || "get";
-          this._data = options.body;
-          this._isUrlInIgnoreList = self.isUrlInIgnoreList(url);
+    // fetch(input: RequestInfo, init?: RequestInit | undefined): Promise<Response>
+    window.fetch = function (
+      url: RequestInfo,
+      options?: RequestInit | undefined
+    ) {
+      options = options || {};
+      // debugger;
+      const reqUrl = url instanceof Request ? url.url : url;
+      const method = options.method || "get";
+      const data = options.body;
 
-          const startTime: number = Date.now();
-          const reqStartRes: IFetchReqStartRes = {
-            url,
-            options,
+      let isUrlInIgnoreList = false;
+      if (typeof url === "string") {
+        isUrlInIgnoreList = self.isUrlInIgnoreList(url);
+      }
+
+      const startTime: number = Date.now();
+
+      const reqStartRes: IFetchReqStartRes = {
+        url: reqUrl,
+        options,
+      };
+
+      if (!isUrlInIgnoreList) {
+        myEmitter.emitWithGlobalData(TrackerEvents.reqStart, reqStartRes);
+      }
+
+      return originFetch(url, options)
+        .then((res: Response) => {
+          const status = res.status;
+          const reqEndRes: IReqEndRes = {
+            requestUrl: res.url,
+            requestMethod: method,
+            requestData: data,
+            response: res,
+            duration: Date.now() - startTime,
+            context: this,
+            status,
           };
 
-          if (!this._isUrlInIgnoreList) {
-            myEmitter.emitWithGlobalData(TrackerEvents.reqStart, reqStartRes);
+          const errorType = ErrorType.httpRequestError;
+
+          const reqErrorRes: IHttpReqErrorRes = {
+            requestMethod: method,
+            requestUrl: reqUrl,
+            requestData: data,
+            errorMsg: res.statusText,
+            errorType,
+          };
+
+          if (!isUrlInIgnoreList) {
+            if (status >= 200 && status < 300) {
+              myEmitter.emitWithGlobalData(TrackerEvents.reqEnd, reqEndRes);
+            } else {
+              self.safeEmitError(
+                `${errorType}: ${reqUrl}`,
+                TrackerEvents.reqError,
+                reqErrorRes
+              );
+            }
           }
 
-          return originFetch(url, options)
-            .then((res) => {
-              const status = res.status;
-              const reqEndRes: IReqEndRes = {
-                requestUrl: res.url,
-                requestMethod: this._method,
-                requestData: this._data,
-                response: res,
-                duration: Date.now() - startTime,
-                context: this,
-                status,
-              };
+          return res;
+        })
+        .catch((e: Error) => {
+          const errorType = ErrorType.httpRequestError;
+          const reqErrorRes: IHttpReqErrorRes = {
+            requestMethod: method,
+            requestUrl: reqUrl,
+            requestData: data,
+            errorMsg: e.message,
+            errorType,
+          };
+          if (!isUrlInIgnoreList) {
+            self.safeEmitError(
+              `${errorType}: ${reqUrl}`,
+              TrackerEvents.reqError,
+              reqErrorRes
+            );
+          }
 
-              const errorType = ErrorType.httpRequestError;
+          throw e;
+        });
+    };
 
-              const reqErrorRes: IHttpReqErrorRes = {
-                requestMethod: this._method,
-                requestUrl: this._url,
-                requestData: this._data,
-                errorMsg: res.statusText,
-                errorType,
-              };
-
-              if (!this._isUrlInIgnoreList) {
-                if (status >= 200 && status < 300) {
-                  myEmitter.emitWithGlobalData(TrackerEvents.reqEnd, reqEndRes);
-                } else {
-                  self.safeEmitError(
-                    `${errorType}: ${this._url}`,
-                    TrackerEvents.reqError,
-                    reqErrorRes
-                  );
-                }
-              }
-
-              return Promise.resolve(res);
-            })
-            .catch((e: Error) => {
-              const errorType = ErrorType.httpRequestError;
-              const reqErrorRes: IHttpReqErrorRes = {
-                requestMethod: this._method,
-                requestUrl: this._url,
-                requestData: this._data,
-                errorMsg: e.message,
-                errorType,
-              };
-
-              if (!this._isUrlInIgnoreList) {
-                self.safeEmitError(
-                  `${errorType}: ${this._url}`,
-                  TrackerEvents.reqError,
-                  reqErrorRes
-                );
-              }
-            });
-        }.bind({});
-      },
-    });
+    // Object.defineProperty(window, "fetch", {
+    //   configurable: true,
+    //   enumerable: true,
+    //   value:
+    // });
   }
 }
