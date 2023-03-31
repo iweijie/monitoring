@@ -7,7 +7,7 @@ import koaStatic from "koa-static";
 
 const router = new koaRouter();
 const app = new Koa();
-const port = 3000;
+const port = 3333;
 const render = views(path.join(__dirname, "../example"));
 
 app.use(koaStatic("."));

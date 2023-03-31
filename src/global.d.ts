@@ -5,6 +5,10 @@ interface XMLHttpRequest {
 }
 
 interface Window {
-  DJObserver: any;
-  DJMonitor: any;
+  MonitorObserver: any;
+  Monitor: any;
+  MonitorInstance: any;
+  mozIndexedDB: any;
+  msIndexedDB: any;
+  webkitIndexedDB: any;
 }

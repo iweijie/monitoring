@@ -77,19 +77,9 @@
 
   <script>
     const isPerformance = localStorage.getItem("performance") ? true : false;
-    const monitor = FeMonitor.Monitor.init({
-      error: {
-        repeat: 10
-      },
-      behavior:{
-        watch: true
-      },
-      performance: isPerformance
-    });
 
-    // monitor.useVueErrorListener(Vue);
     // Not recommend listen all event, only for demo
-    monitor.on("event", (eventName, emitData) => {
+    MonitorInstance.on("event", (eventName, emitData) => {
       console.log(eventName, emitData);
     });
 
@@ -99,7 +89,7 @@
           throw new Error("mock vuejs error");
         }
       },
-      template: `<div> <el-button @click="onVuejsComponentError">test</el-button></div>`
+      template: `<div> <el-button @click="onVuejsComponentError">click error</el-button></div>`
     });
 
     new Vue({
@@ -118,7 +108,6 @@
       },
       computed:{
         d(){
-          console.log( JSON.stringify(this.iweijie) )
           return JSON.stringify(this.iweijie) 
         }
       },
@@ -189,7 +178,7 @@
         },
         onLoadImageError() {
           const image = document.createElement("img");
-          image.setAttribute("src", "/img/undefined.png");
+          image.setAttribute("src", `/img/undefined.png?f=${Date.now()}`);
           document.body.appendChild(image);
         },
         onFetchSuccess() {

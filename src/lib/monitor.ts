@@ -21,10 +21,10 @@ export enum Env {
 }
 
 export interface IErrorOptions {
-  watch: boolean;
-  random: number;
-  repeat: number;
-  delay: number;
+  watch?: boolean;
+  random?: number;
+  repeat?: number;
+  delay?: number;
 }
 
 export type URLItem = string | RegExp;
@@ -241,6 +241,7 @@ export class Monitor {
       this.spaHandler = SpaHandler.init();
       myEmitter.on(TrackerEvents.routerChange, (...rest) => {
         const [, , url] = rest;
+        console.log(url);
         this.configData({
           _spaUrl: url,
         });

@@ -24,7 +24,7 @@ export class SpaHandler {
   }
 
   private hackState(fnName: "pushState" | "replaceState") {
-    const func = window.history[fnName];
+    const func = window.history && window.history[fnName];
     if (typeof func === "function") {
       window.history[fnName] = function (...rest) {
         myEmitter.customEmit(TrackerEvents.routerChange, ...rest);
