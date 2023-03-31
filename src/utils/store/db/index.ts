@@ -1,5 +1,5 @@
-import type { Add } from "../store";
+// import type { Add } from "../store";
 
-import a from "./handle";
+// import a from "./handle";
 
-export const add: Add = () => {};
+// export const add: Add = () => {};
