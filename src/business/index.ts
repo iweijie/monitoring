@@ -1,18 +1,10 @@
 import ErrorStackParser from "error-stack-parser";
-
 import { jsonStringifySafe as stringify } from "../lib/util";
-
+import { TrackerEvents } from "../types/index";
 import { Monitor } from "../lib/monitor";
-
-import { observer } from "../lib/observer";
-
-const handle = (params: any[]): void => {
-  observer.preEmit("monitor", params);
-};
-
-const handleChangeMode = (type: string): void => {
-  console.log(type);
-};
+import type { ITrackerOptions } from "../lib/monitor";
+import { observer } from "./observer";
+import { handle } from "./handle";
 
 /** 防止 monitor 错误导致主程序挂掉 */
 try {
@@ -39,8 +31,12 @@ try {
   }
 
   // 切换模式
-  observer.on("changeMode", (mode: string) => {
-    console.log(mode);
+  // observer.on("changeMode", (mode: string) => {
+  //   console.log(mode);
+  // });
+  // 设置参数
+  observer.on("option", (options: Partial<ITrackerOptions>) => {
+    monitor.setOptions(options);
   });
 
   monitor.on("event", (...res) => {

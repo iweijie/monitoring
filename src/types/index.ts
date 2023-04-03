@@ -58,3 +58,9 @@ export enum ErrorType {
   resourceError = "resourceError",
   httpRequestError = "httpError",
 }
+
+export enum ReportOtherKey {
+  reqStatistics = "reqStatistics",
+}
+
+export const reportMergeKey = { ...ErrorType, ...ReportOtherKey };

@@ -40,7 +40,6 @@ export class BaseObserver {
     } else {
       this._cacheError[cacheKey] += 1;
     }
-
     const repeat = (this._options.error as IErrorOptions)?.repeat || 0;
     if (this._cacheError[cacheKey] < repeat) {
       myEmitter.emitWithGlobalData(errorType, errorObj);

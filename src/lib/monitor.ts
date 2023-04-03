@@ -81,7 +81,7 @@ export type PlainObject = Record<string | number | symbol, unknown>;
 
 export type IData = Record<string | number | symbol, unknown>;
 
-export const defaultTrackerOptions = {
+export const defaultTrackerOptions = (): ITrackerOptions => ({
   env: Env.Dev,
   data: {},
   error: {
@@ -107,7 +107,7 @@ export const defaultTrackerOptions = {
     listenAttr: "data-report",
   },
   isSpa: true,
-};
+});
 
 export type EventName = string | symbol;
 
@@ -134,7 +134,7 @@ export class Monitor {
 
   public behaviorQueue: BehaviorCombine[] = [];
 
-  private readonly defaultOptions: ITrackerOptions = defaultTrackerOptions;
+  private readonly defaultOptions: ITrackerOptions = defaultTrackerOptions();
 
   public $data: IData = {};
 
@@ -143,7 +143,7 @@ export class Monitor {
   private errorQueueTimer: number | null;
 
   constructor(options: Partial<ITrackerOptions> | undefined) {
-    this.initOptions(options);
+    this.setOptions(options);
 
     this.getNetworkType();
     this.getLocaleLanguage();
@@ -186,9 +186,9 @@ export class Monitor {
   }
 
   /**
-   * 初始化配置项
+   * 设置配置项
    */
-  private initOptions(options: Partial<ITrackerOptions> | undefined): void {
+  public setOptions(options: Partial<ITrackerOptions> | undefined): void {
     if (!options) options = {};
 
     this.$options = merge(this.$options, options);

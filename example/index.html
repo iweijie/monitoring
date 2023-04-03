@@ -43,6 +43,7 @@
         <el-button @click="onAsyncAjaxSuccess">origin async req success</el-button>
         <el-button @click="onJquerySyncAjaxSuccess">jquery sync req success</el-button>
         <el-button @click="onJqueryAsyncAjaxSuccess">jquery async req success</el-button>
+        <el-button @click="onJqueryAsyncAjaxSuccessPost">jquery async req success post</el-button>
         <el-button @click="onAjax404Error">req 404</el-button>
         <el-button @click="onAjax500Error">req 500</el-button>
         <el-button @click="onAjaxTimeoutError">req timeout</el-button>
@@ -145,7 +146,16 @@
         },
         onJqueryAsyncAjaxSuccess() {
           $.ajax({
-            url: '/api/success',
+            url: '/api/success?a=11&b=22',
+            async: true,
+          })
+        },
+        onJqueryAsyncAjaxSuccessPost() {
+          $.ajax({
+            url: '/api/post/success',
+            data:{test:1, test2:2},
+            params:{test:1, test2:2},
+            method:"post",
             async: true,
           })
         },

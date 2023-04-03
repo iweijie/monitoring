@@ -14,11 +14,17 @@ app.use(koaStatic("."));
 app.use(render);
 app.use(
   cors({
-    allowMethods: "GET,HEAD,PUT,POST,DELETE,PATCH"
+    allowMethods: "GET,HEAD,PUT,POST,DELETE,PATCH",
   })
 );
 
 router.post("/api/reportUrl", async (ctx) => {
+  ctx.body = "success";
+});
+
+router.post("/api/post/success", async (ctx) => {
+  // console.log("ctx", ctx?.req);
+  // await sleep(1000);
   ctx.body = "success";
 });
 
@@ -35,6 +41,8 @@ router.get("/api/timeout", async () => {
 });
 
 router.get("/api/success", async (ctx) => {
+  // console.log("ctx", ctx?.req);
+  // await sleep(2000);
   ctx.body = "success";
 });
 
