@@ -1,10 +1,20 @@
-export enum storeEnumKey {
-  monitor_error_key = "monitor_error_key",
-}
+console.log(process.env.NODE_ENV);
+import type { StoreMapsType } from "./type";
 
-type RequestStoreMapsType = {
-  [key in string]: Array<number>;
-};
+const ExprieLevel =
+  process.env.NODE_ENV === "development"
+    ? {
+        high: 0,
+        middle: 1000 * 2,
+        low: 1000 * 3,
+        saltedFish: 1000 * 5,
+      }
+    : {
+        high: 1000 * 60,
+        middle: 1000 * 60 * 2,
+        low: 1000 * 60 * 5,
+        saltedFish: 1000 * 60 * 30,
+      };
 
 type StoreOptionsType = {
   // 本地存储Key
@@ -17,26 +27,12 @@ type StoreOptionsType = {
 
 class Store {
   public t: boolean;
-  public monitorKey = "monitor_request_key";
-  public monitorExpire = "monitor_request_key_expire";
-  /**
-   * 值为零：自定义处理
-   * 值>0 : 在存储的情况下会检测是否到期，到期一次性返回存储值（以数组的方式返回）
-   * 
-   * 可能存在的问题：
-   *    1. 如果到期之后一直再次Add... 当前数据就会一直存在
-   *  
-   */
-  public expireTime = 1000 * 60 * 5;
 
-  constructor(options: StoreOptionsType) {
+  constructor() {
     this.t = this.test();
-    this.monitorKey = options.monitorKey;
-    this.monitorExpire = options.monitorExpire;
-    this.expireTime = Math.max(options.expireTime, 0);
   }
 
-  public test() {
+  private test() {
     const key = `monitor_test_${Math.random()}`;
     if (typeof localStorage === "object") {
       try {
@@ -50,96 +46,154 @@ class Store {
     return false;
   }
 
-  private hasExpire(): boolean {
-    const { monitorExpire, expireTime } = this;
+  insert(key: string, value: any): boolean {
     if (!this.t) return false;
     try {
-      const expireStr = window.localStorage.getItem(monitorExpire);
-      let expire;
-      if (!expireStr) {
-        expire = Date.now() + expireTime;
-        window.localStorage.setItem(monitorExpire, expire.toString());
-      } else {
-        expire = JSON.parse(expireStr);
-      }
-
-      if (expire > Date.now()) {
-        return false;
-      }
-
+      window.localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (err) {
       return false;
     }
   }
 
-  add(key: string, value: number): boolean {
-    const { monitorKey } = this;
+  get<T>(key: string): T | null {
+    if (!this.t) return null;
+    try {
+      return JSON.parse(window.localStorage.getItem(key) || "");
+    } catch (err) {
+      return null;
+    }
+  }
+
+  has(key: string): boolean {
     if (!this.t) return false;
     try {
-      const store = window.localStorage.getItem(monitorKey);
-      const maps: RequestStoreMapsType = store ? JSON.parse(store) : {};
+      if (this.get(key) !== null) {
+        return true;
+      }
+    } catch (err) {
+      return false;
+    }
+
+    return false;
+  }
+
+  delete(key: string): boolean {
+    if (!this.t) return false;
+    try {
+      window.localStorage.removeItem(key);
+      return true;
+    } catch (err) {
+      return true;
+    }
+  }
+}
+
+class LocalStore extends Store {
+  public monitorKey: string;
+  public monitorExpire: string;
+  // 过期时间
+  public expireTime: number;
+  private _timer: any;
+  private _fn: any;
+  private isRun = false;
+
+  constructor(options: StoreOptionsType) {
+    super();
+    this.monitorKey = options.monitorKey;
+    this.monitorExpire = options.monitorExpire;
+    this.expireTime = Math.max(options.expireTime, 0);
+  }
+
+  add(key: string, value: any): boolean {
+    const { monitorKey } = this;
+    try {
+      const maps: StoreMapsType = this.get<StoreMapsType>(monitorKey) || {};
 
       if (!maps[key]) {
         maps[key] = [];
       }
       maps[key].push(value);
-      window.localStorage.setItem(monitorKey, JSON.stringify(maps));
+      this.insert(monitorKey, maps);
+      // 插入数据后开始倒计时
+      this.run();
       return true;
     } catch (err) {
       return false;
     }
   }
 
-  getAll(): RequestStoreMapsType | null {
-    const { monitorKey } = this;
-    if (!this.t) return null;
-    if (this.hasExpire()) {
-      try {
-        const store = window.localStorage.getItem(monitorKey);
-        this.remove();
-        return store ? JSON.parse(store) : null;
-      } catch (err) {
-        return null;
+  private run() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
+    if (this.isRun) return;
+    this.isRun = true;
+    if (!this.has(this.monitorExpire)) {
+      this.insert(this.monitorExpire, Date.now() + this.expireTime);
+    }
+    const expiresTime = this.get<number>(this.monitorExpire) || 0;
+
+    const time = Math.max(expiresTime - Date.now(), 0);
+    console.log(time);
+    this._timer = setTimeout(() => {
+      if (typeof that._fn !== "function") return;
+      const data = this.get<StoreMapsType>(this.monitorKey);
+      this.delete(this.monitorKey);
+      if (data) {
+        that._fn(data);
       }
-    }
-    return null;
+      this.isRun = false;
+      this.delete(this.monitorExpire);
+    }, time);
   }
 
-  private remove(): boolean {
-    const { monitorKey } = this;
-    if (!this.t) return false;
-    try {
-      window.localStorage.removeItem(monitorKey);
-      return true;
-    } catch (err) {
-      return false;
+  subscribe(fn: (data: any) => void) {
+    this._fn = fn;
+  }
+
+  unsubscribe() {
+    if (this._timer) {
+      clearTimeout(this._timer);
     }
+    this._fn = null;
   }
 }
 
-export class RequestSuccessStore extends Store {
+export class RequestSuccessStore extends LocalStore {
   constructor() {
     super({
       // 本地存储Key
       monitorKey: "monitor_request_success_key",
       // 统计到期Key
       monitorExpire: "monitor_request_success_key_expire",
-      // 缓存五分钟的接口请求 一次性上报
-      expireTime: 1000 * 60 * 5,
+
+      expireTime: ExprieLevel.low,
     });
   }
 }
 
-export class RequestErrorStore extends Store {
+export class RequestErrorStore extends LocalStore {
   constructor() {
     super({
       // 本地存储Key
       monitorKey: "monitor_request_key",
       // 统计到期Key
       monitorExpire: "monitor_request_key_expire",
-      // 缓存五分钟的接口请求 一次性上报
-      expireTime: 1000 * 60 * 5,
+      // 缓存1分钟的接口请求 一次性上报
+      expireTime: ExprieLevel.high,
+    });
+  }
+}
+
+export class SourceErrorStore extends LocalStore {
+  constructor() {
+    super({
+      // 本地存储Key
+      monitorKey: "monitor_source_error_key",
+      // 统计到期Key
+      monitorExpire: "monitor_source_error_key_expire",
+      // 缓存1分钟的接口请求 一次性上报
+      expireTime: ExprieLevel.high,
     });
   }
 }

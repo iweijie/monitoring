@@ -42,6 +42,7 @@
         <el-button @click="onSyncAjaxSuccess">origin sync req success</el-button>
         <el-button @click="onAsyncAjaxSuccess">origin async req success</el-button>
         <el-button @click="onJquerySyncAjaxSuccess">jquery sync req success</el-button>
+        <el-button @click="onJquerySyncAjaxError">jquery sync req error</el-button>
         <el-button @click="onJqueryAsyncAjaxSuccess">jquery async req success</el-button>
         <el-button @click="onJqueryAsyncAjaxSuccessPost">jquery async req success post</el-button>
         <el-button @click="onAjax404Error">req 404</el-button>
@@ -79,11 +80,12 @@
   <script>
     const isPerformance = localStorage.getItem("performance") ? true : false;
 
-    // Not recommend listen all event, only for demo
-    MonitorInstance.on("event", (eventName, emitData) => {
-      console.log(eventName, emitData);
+    window?.MonitorObserver?.on('monitor', (payload) => {
+      console.log('---------')
+      console.log(payload[0])
+      console.log(payload[1])
+      console.log('---------')
     });
-
     Vue.component("component-a", {
       methods: {
         onVuejsComponentError() {
@@ -125,13 +127,22 @@
         onAjax500Error() {
           const xhr = new XMLHttpRequest();
           xhr.withCredentials = true;
-          xhr.open("get", "/api/500", true);
+          xhr.open("get", "/api/500?data=1&a=2", true);
           xhr.send();
         },
         onSyncAjaxSuccess() {
           const xhr = new XMLHttpRequest();
           xhr.open("get", "/api/success", false);
           xhr.send();
+        },
+        onJquerySyncAjaxError() {
+          $.ajax({
+            url: '/api/success/1',
+            async: true,
+            method:'get',
+            dataType:"application/x-www-form-urlencoded",
+            data:{ 1:'1111', test:"iweijie" }
+          })
         },
         onJquerySyncAjaxSuccess() {
           $.ajax({

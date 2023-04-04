@@ -60,7 +60,9 @@ export enum ErrorType {
 }
 
 export enum ReportOtherKey {
-  reqStatistics = "reqStatistics",
+  reqSucStatistics = "reqSucStatistics",
+  reqErrorStatistics = "reqErrorStatistics",
+  sourceErrorStatistics = "sourceErrorStatistics",
 }
 
 export const reportMergeKey = { ...ErrorType, ...ReportOtherKey };
