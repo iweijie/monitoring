@@ -19,12 +19,13 @@ app.use(
 );
 
 router.post("/api/reportUrl", async (ctx) => {
+  await sleep(Math.floor(Math.random() * 1000));
   ctx.body = "success";
 });
 
 router.post("/api/post/success", async (ctx) => {
   // console.log("ctx", ctx?.req);
-  // await sleep(1000);
+  await sleep(Math.floor(Math.random() * 1000));
   ctx.body = "success";
 });
 

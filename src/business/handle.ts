@@ -36,7 +36,6 @@ export const handle = (params: any[]): void => {
   // 请求完结
   if (type === TrackerEvents.reqEnd) {
     requestSuccessStore.add(getURLPathname(data?.requestUrl), data?.duration);
-    return;
   }
   // 请求失败完结
   if (type === TrackerEvents.reqError) {
@@ -49,21 +48,11 @@ export const handle = (params: any[]): void => {
     };
 
     requestErrorStore.add(getURLPathname(data?.requestUrl), d);
-    return;
   }
 
   // 资源加载错误统计
   if (type === TrackerEvents.resourceError) {
-    const d = {
-      s: data?.status,
-      p:
-        (data?.requestMethod || "").toUpperCase === "GET"
-          ? getURLQuery(data?.requestUrl)
-          : data.requestData,
-    };
-
-    requestErrorStore.add(getURLPathname(data?.requestUrl), d);
-    return;
+    requestErrorStore.add(getURLPathname(data?.url), data?.url);
   }
 
   observer.preEmit("monitor", params);

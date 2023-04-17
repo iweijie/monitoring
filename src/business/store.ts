@@ -1,12 +1,12 @@
 console.log(process.env.NODE_ENV);
 import type { StoreMapsType } from "./type";
 
-const ExprieLevel =
+const ExpireLevel =
   process.env.NODE_ENV === "development"
     ? {
         high: 0,
         middle: 1000 * 2,
-        low: 1000 * 3,
+        low: 1000 * 10,
         saltedFish: 1000 * 5,
       }
     : {
@@ -167,7 +167,7 @@ export class RequestSuccessStore extends LocalStore {
       // 统计到期Key
       monitorExpire: "monitor_request_success_key_expire",
 
-      expireTime: ExprieLevel.low,
+      expireTime: ExpireLevel.low,
     });
   }
 }
@@ -180,7 +180,7 @@ export class RequestErrorStore extends LocalStore {
       // 统计到期Key
       monitorExpire: "monitor_request_key_expire",
       // 缓存1分钟的接口请求 一次性上报
-      expireTime: ExprieLevel.high,
+      expireTime: ExpireLevel.high,
     });
   }
 }
@@ -193,7 +193,7 @@ export class SourceErrorStore extends LocalStore {
       // 统计到期Key
       monitorExpire: "monitor_source_error_key_expire",
       // 缓存1分钟的接口请求 一次性上报
-      expireTime: ExprieLevel.high,
+      expireTime: ExpireLevel.high,
     });
   }
 }

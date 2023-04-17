@@ -1,8 +1,4 @@
-import type {
-  StoreMapsType,
-  FormatReqSuccessType,
-  FormatReqSuccessDataType,
-} from "./type";
+import type { StoreMapsType, FormatReqSuccessType } from "./type";
 
 export enum TimeRange {
   /** >= 0 && < 200  */
@@ -14,10 +10,8 @@ export enum TimeRange {
   /** >= 1000 && < 2000  */
   d = 2000,
   /** >= 2000  */
-  e = 2000,
+  e = Number.MAX_SAFE_INTEGER,
 }
-
-const MaxLargeCount = 5;
 
 export const getTimeRange = (n: number): TimeRange => {
   if (n < TimeRange.a) return TimeRange.a;
@@ -36,31 +30,42 @@ export const handleFormatReqSuccess = (data: StoreMapsType) => {
       const key = keys[i];
       let d = data[key];
       if (d && d.length) {
-        const c: FormatReqSuccessDataType = {
-          max: "",
-          count: 0,
-          avg: 0,
-          segment: {},
-        };
+        const c = [
+          d.length,
+          Math.round((d.reduce((a, b) => a + b) / d.length) * 100) / 100,
+          "",
+          "",
+        ];
+
+        const segment: any = {};
+
         d = d.sort((a, b) => a - b);
 
-        const largeIndex = d.findIndex((c) => c > 2000);
+        const largeIndex = d.findIndex((c) => c > TimeRange.d);
 
-        if (largeIndex < d.length - MaxLargeCount) {
-          // TODO
+        if (largeIndex >= 0) {
+          c[2] = d.slice(largeIndex, d.length).join(",");
         }
 
-        c.count = d.length;
         d.forEach((v) => {
           const time = getTimeRange(v);
-          if (c.segment[time] === undefined) {
-            c.segment[time] = 0;
+          if (segment[time] === undefined) {
+            segment[time] = 0;
           }
-          c.segment[time] += 1;
+          segment[time] += 1;
         });
+
+        if (Object.keys(segment)?.length) {
+          c[3] = JSON.stringify(segment);
+        }
+
+        s[key] = c.join(";");
       }
     }
   } catch (err) {
-    return s;
+    console.log(err);
+    // TODO: 是否需要上报？？
   }
+
+  return s;
 };
