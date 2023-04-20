@@ -52,3 +52,72 @@ export const jsonStringifySafe = (data: any): string => {
     return "";
   }
 };
+
+export const isBrowser = typeof window === "object" && window;
+
+export const getURLPathname = (url: string): string => {
+  if (URL && typeof URL === "function") {
+    try {
+      return new URL(url)?.pathname || url;
+    } catch (err) {
+      //
+    }
+  }
+
+  if (
+    document &&
+    document.createElement &&
+    typeof document.createElement === "function"
+  ) {
+    try {
+      const a = document.createElement("a");
+      a.href = url;
+      return a.pathname.replace(/^([^/])/, "/$1");
+    } catch (err) {
+      //
+    }
+  }
+
+  return url;
+};
+
+export const getURLQuery = (url: string): string => {
+  if (URL && typeof URL === "function") {
+    try {
+      return new URL(url)?.search.slice(1);
+    } catch (err) {
+      //
+    }
+  }
+
+  if (
+    document &&
+    document.createElement &&
+    typeof document.createElement === "function"
+  ) {
+    try {
+      const a = document.createElement("a");
+      a.href = url;
+      return a.search.slice(1);
+    } catch (err) {
+      //
+    }
+  }
+
+  try {
+    const [, search] = url.split("?");
+    return search;
+  } catch (err) {
+    //
+  }
+
+  return url;
+};
+
+export const isSamePathname = (url: string, url1: string) => {
+  if (url === url1) return true;
+  const urlPathname = getURLPathname(url);
+  const urlPathname1 = getURLPathname(url1);
+  if (urlPathname && urlPathname1 && urlPathname === urlPathname1) return true;
+  return false;
+};

@@ -1,8 +1,7 @@
 import ErrorStackParser from "error-stack-parser";
 import { jsonStringifySafe as stringify } from "../lib/util";
-import { TrackerEvents } from "../types/index";
 import { Monitor } from "../lib/monitor";
-import type { ITrackerOptions } from "../lib/monitor";
+import type { IHttpOptions } from "../lib/monitor";
 import { observer } from "./observer";
 import { handle } from "./handle";
 
@@ -35,8 +34,8 @@ try {
   //   console.log(mode);
   // });
   // 设置参数
-  observer.on("option", (options: Partial<ITrackerOptions>) => {
-    monitor.setOptions(options);
+  observer.on("option", (options: IHttpOptions["ignoreRules"]) => {
+    monitor.setIgnoreRules(options);
   });
 
   monitor.on("event", (...res) => {

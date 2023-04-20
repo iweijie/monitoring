@@ -1,4 +1,3 @@
-console.log(process.env.NODE_ENV);
 import type { StoreMapsType } from "./type";
 
 const ExpireLevel =
@@ -134,7 +133,6 @@ class LocalStore extends Store {
     const expiresTime = this.get<number>(this.monitorExpire) || 0;
 
     const time = Math.max(expiresTime - Date.now(), 0);
-    console.log(time);
     this._timer = setTimeout(() => {
       if (typeof that._fn !== "function") return;
       const data = this.get<StoreMapsType>(this.monitorKey);

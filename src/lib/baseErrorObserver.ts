@@ -1,7 +1,7 @@
 import { IErrorOptions, ITrackerOptions } from "./monitor";
 import { BaseError } from "../types/index";
 import { myEmitter } from "./event";
-import { replaceSlash } from "./util";
+import { isSamePathname } from "./util";
 
 export interface IError extends BaseError {
   msg: string | Event;
@@ -55,20 +55,14 @@ export class BaseObserver {
    * Check if request url match ignored rules
    */
   isUrlInIgnoreList(url: string): boolean {
-    const ignoreList = this._options.http.ignoreRules;
-    // const reportUrl = this._options.report.url;
-
-    // // If reportUrl is setted, alse add to ignoreList
-    // if (reportUrl) {
-    //   ignoreList.push(reportUrl);
-    // }
-
+    const ignoreList = this._options.http.ignoreRules || [];
     return ignoreList.some((urlItem) => {
       if (typeof urlItem === "string") {
-        return replaceSlash(urlItem) === replaceSlash(url);
-      } else {
+        return isSamePathname(urlItem, url);
+      } else if (urlItem instanceof RegExp) {
         return urlItem.test(url);
       }
+      return false;
     });
   }
 }

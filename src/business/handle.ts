@@ -5,7 +5,7 @@ import {
   RequestErrorStore,
   SourceErrorStore,
 } from "./store";
-import { getURLPathname, getURLQuery } from "./utils";
+import { getURLPathname, getURLQuery } from "../lib/util";
 import { handleFormatReqSuccess } from "./format";
 
 const requestSuccessStore = new RequestSuccessStore();

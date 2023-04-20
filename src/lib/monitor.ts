@@ -7,7 +7,12 @@ import { IPerformanceInfo, PerformanceObserver } from "./performance";
 import { BehaviorCombine, BehaviorObserver } from "./behaviorObserver";
 import { ReportObserver } from "./report";
 import { TrackerEvents, IHttpReqErrorRes } from "../types";
-import { isObject, getNetworkType, getLocaleLanguage } from "./util";
+import {
+  isObject,
+  getNetworkType,
+  getLocaleLanguage,
+  getURLPathname,
+} from "./util";
 import packageJson from "../../package.json";
 import { SpaHandler } from "./spaHandler";
 import { IError, IUnHandleRejectionError } from "./baseErrorObserver";
@@ -30,9 +35,9 @@ export interface IErrorOptions {
 export type URLItem = string | RegExp;
 
 export interface IHttpOptions {
-  fetch: boolean;
-  ajax: boolean;
-  ignoreRules: URLItem[];
+  fetch?: boolean;
+  ajax?: boolean;
+  ignoreRules?: URLItem[];
 }
 
 export enum ConsoleType {
@@ -143,7 +148,7 @@ export class Monitor {
   private errorQueueTimer: number | null;
 
   constructor(options: Partial<ITrackerOptions> | undefined) {
-    this.setOptions(options);
+    this.initOptions(options);
 
     this.getNetworkType();
     this.getLocaleLanguage();
@@ -188,10 +193,27 @@ export class Monitor {
   /**
    * 设置配置项
    */
-  public setOptions(options: Partial<ITrackerOptions> | undefined): void {
+  public initOptions(options: Partial<ITrackerOptions> | undefined): void {
     if (!options) options = {};
 
     this.$options = merge(this.$options, options);
+  }
+
+  /**
+   * 设置配置项
+   */
+  public setIgnoreRules(ignoreRules: IHttpOptions["ignoreRules"]): void {
+    if (!ignoreRules || !ignoreRules.length) return;
+    if (!this.$options?.http) {
+      this.$options.http = {};
+    }
+    if (
+      !this.$options.http?.ignoreRules ||
+      !this.$options.http?.ignoreRules?.length
+    ) {
+      this.$options.http.ignoreRules = [];
+    }
+    this.$options.http?.ignoreRules?.push(...ignoreRules);
   }
 
   private initGlobalData(): void {
@@ -239,9 +261,13 @@ export class Monitor {
 
     if (this.$options.isSpa) {
       this.spaHandler = SpaHandler.init();
+      // 重复路由push 不重复触发
+      let localPathname = "";
       myEmitter.on(TrackerEvents.routerChange, (...rest) => {
         const [, , url] = rest;
-        console.log(url);
+        const pathname = getURLPathname(url);
+        if (pathname && pathname === localPathname) return;
+        localPathname = pathname;
         this.configData({
           _spaUrl: url,
         });
