@@ -3,6 +3,7 @@ import { jsonStringifySafe as stringify } from "../lib/util";
 import { Monitor } from "../lib/monitor";
 import type { IHttpOptions } from "../lib/monitor";
 import { observer } from "./observer";
+import { reportMergeKey } from "../types/index";
 import { handle } from "./handle";
 
 /** 防止 monitor 错误导致主程序挂掉 */
@@ -38,21 +39,28 @@ try {
     monitor.setIgnoreRules(options);
   });
 
+  // 设置参数
+  observer.on("error", (error: Error) => {
+    const stackTrace =
+      error instanceof Error ? ErrorStackParser.parse(error) : [];
+    const errorObj = {
+      msg: error.message || "",
+      stackTrace: stackTrace,
+    };
+    observer.preEmit("monitor", [reportMergeKey.monitorCustomError, errorObj]);
+  });
+
   monitor.on("event", (...res) => {
-    console.debug(res);
     handle(res);
   });
 } catch (error) {
   const stackTrace =
     error instanceof Error ? ErrorStackParser.parse(error) : [];
   const errorObj = {
-    msg: "monitor加载失败",
-    url: "",
-    line: "",
-    column: "",
+    msg: error instanceof Error ? error.message : "",
     stackTrace: stringify(stackTrace),
     errorType: "monitor-load-error",
   };
 
-  observer.preEmit("monitor", errorObj);
+  observer.preEmit("monitor", [reportMergeKey.monitorLoadError, errorObj]);
 }

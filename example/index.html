@@ -36,6 +36,10 @@
       <div>
         <el-button onClick="onJsError1()">Hit this button fast</el-button>
       </div>
+      <p>cache erro</p>
+      <div>
+        <el-button onClick="onJsErrorCache()">test</el-button>
+      </div>
 
       <h2>ajax</h2>
       <div>
@@ -232,6 +236,14 @@
     }
     function onJsError1() {
       throw new Error("jsError1");
+    }
+    function onJsErrorCache() {
+      try {
+        throw new Error("jsError");
+      }catch(err){
+        console.log(err)
+        window.MonitorObserver.emit('error', err)
+      }     
     }
   </script>
 </body>

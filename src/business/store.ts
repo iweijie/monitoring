@@ -9,9 +9,9 @@ const ExpireLevel =
         saltedFish: 1000 * 5,
       }
     : {
-        high: 1000 * 60,
-        middle: 1000 * 60 * 2,
-        low: 1000 * 60 * 5,
+        high: 0,
+        middle: 1000 * 30,
+        low: 1000 * 60 * 2,
         saltedFish: 1000 * 60 * 30,
       };
 

@@ -57,6 +57,8 @@ export enum ErrorType {
   unHandleRejectionError = "unHandleRejectionError",
   resourceError = "resourceError",
   httpRequestError = "httpError",
+  monitorLoadError = "monitorLoadError",
+  monitorCustomError = "monitorCustomError",
 }
 
 export enum ReportOtherKey {
