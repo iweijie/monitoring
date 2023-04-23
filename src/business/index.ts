@@ -29,7 +29,7 @@ try {
   }
 
   // 设置参数
-  observer.on("option", (options: IHttpOptions["ignoreRules"]) => {
+  observer.on("ignoreRules", (options: IHttpOptions["ignoreRules"]) => {
     monitor.setIgnoreRules(options);
   });
 
