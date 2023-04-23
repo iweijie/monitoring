@@ -35,10 +35,7 @@ try {
 
   // 设置参数
   observer.on("error", (error: Error) => {
-    observer.preEmit("monitor", [
-      reportMergeKey.monitorCustomError,
-      parseError(error),
-    ]);
+    observer.preEmit("monitor", [reportMergeKey.jsError, parseError(error)]);
   });
 
   monitor.on("event", (...res) => {

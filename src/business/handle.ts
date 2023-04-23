@@ -1,4 +1,3 @@
-import ErrorStackParser from "error-stack-parser";
 import { TrackerEvents, reportMergeKey } from "../types/index";
 import { observer } from "./observer";
 import {
@@ -41,8 +40,8 @@ export const handle = (params: any[]): void => {
   // 请求失败完结
   if (type === TrackerEvents.reqError) {
     const d = {
-      s: data?.status,
-      p:
+      status: data?.status,
+      data:
         (data?.requestMethod || "").toUpperCase === "GET"
           ? getURLQuery(data?.requestUrl)
           : data.requestData,
@@ -60,13 +59,9 @@ export const handle = (params: any[]): void => {
 };
 
 export const parseError = (error: any) => {
-  const stackTrace =
-    error instanceof Error ? ErrorStackParser.parse(error) : [];
-  const errorObj = {
-    msg: error instanceof Error ? error.message : "",
-    stackTrace,
+  const isError = error instanceof Error;
+  return {
+    msg: isError ? error.toString() : "",
+    stack: isError ? error?.stack : "",
   };
-
-  return errorObj;
 };
-

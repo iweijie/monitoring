@@ -1,7 +1,5 @@
 import { ITrackerOptions } from "./monitor";
 import { TrackerEvents, BaseError, ErrorType } from "../types/index";
-import ErrorStackParser from "error-stack-parser";
-import { jsonStringifySafe as stringify } from "./util";
 import {
   BaseObserver,
   IError,
@@ -25,14 +23,13 @@ export class ErrorObserver extends BaseObserver {
 
       const [msg, url, line, column, error] = args;
 
-      const stackTrace = error ? ErrorStackParser.parse(error) : [];
       const msgText = typeof msg === "string" ? msg : msg.type;
       const errorObj: IError = {
-        msg: msgText,
+        msg: error?.toString() || "",
         url,
         line,
         column,
-        stackTrace: stringify(stackTrace),
+        stack: error?.stack || "",
         errorType: ErrorType.jsError,
         context: this,
       };

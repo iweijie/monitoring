@@ -7,7 +7,7 @@ export interface IError extends BaseError {
   msg: string | Event;
   line: number | undefined;
   column: number | undefined;
-  stackTrace: string;
+  stack: string;
 }
 
 export interface IUnHandleRejectionError extends BaseError {
