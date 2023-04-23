@@ -1,4 +1,5 @@
-import { Monitor, TrackerEvents } from "../src/index";
+import { Monitor } from "../src/lib/monitor";
+import { TrackerEvents } from "../src/types";
 import jestMock from "jest-fetch-mock";
 
 jestMock.enableMocks();
@@ -8,7 +9,7 @@ const monitor = Monitor.init();
 describe("API: configData", () => {
   it("check basic type", () => {
     monitor.configData({
-      foo: "hello"
+      foo: "hello",
     });
     monitor.configData("bar", "world");
 
@@ -18,10 +19,10 @@ describe("API: configData", () => {
 
   it("check overwrite", () => {
     monitor.configData({
-      foo: "hello"
+      foo: "hello",
     });
     monitor.configData({
-      foo: "world"
+      foo: "world",
     });
 
     expect(monitor.$data.foo).toBe("world");
@@ -31,18 +32,18 @@ describe("API: configData", () => {
     monitor.configData({
       foo: {
         foo: "hello",
-        bar: "world"
-      }
+        bar: "world",
+      },
     });
     monitor.configData({
       foo: {
-        bar: "hello"
-      }
+        bar: "hello",
+      },
     });
 
     expect(monitor.$data.foo).toEqual({
       foo: "hello",
-      bar: "hello"
+      bar: "hello",
     });
   });
 });

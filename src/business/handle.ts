@@ -1,3 +1,4 @@
+import ErrorStackParser from "error-stack-parser";
 import { TrackerEvents, reportMergeKey } from "../types/index";
 import { observer } from "./observer";
 import {
@@ -57,3 +58,15 @@ export const handle = (params: any[]): void => {
 
   observer.preEmit("monitor", params);
 };
+
+export const parseError = (error: any) => {
+  const stackTrace =
+    error instanceof Error ? ErrorStackParser.parse(error) : [];
+  const errorObj = {
+    msg: error instanceof Error ? error.message : "",
+    stackTrace,
+  };
+
+  return errorObj;
+};
+

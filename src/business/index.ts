@@ -1,10 +1,8 @@
-import ErrorStackParser from "error-stack-parser";
-import { jsonStringifySafe as stringify } from "../lib/util";
 import { Monitor } from "../lib/monitor";
 import type { IHttpOptions } from "../lib/monitor";
 import { observer } from "./observer";
 import { reportMergeKey } from "../types/index";
-import { handle } from "./handle";
+import { handle, parseError } from "./handle";
 
 /** 防止 monitor 错误导致主程序挂掉 */
 try {
@@ -30,10 +28,6 @@ try {
     window.MonitorInstance = monitor;
   }
 
-  // 切换模式
-  // observer.on("changeMode", (mode: string) => {
-  //   console.log(mode);
-  // });
   // 设置参数
   observer.on("option", (options: IHttpOptions["ignoreRules"]) => {
     monitor.setIgnoreRules(options);
@@ -41,26 +35,18 @@ try {
 
   // 设置参数
   observer.on("error", (error: Error) => {
-    const stackTrace =
-      error instanceof Error ? ErrorStackParser.parse(error) : [];
-    const errorObj = {
-      msg: error.message || "",
-      stackTrace: stackTrace,
-    };
-    observer.preEmit("monitor", [reportMergeKey.monitorCustomError, errorObj]);
+    observer.preEmit("monitor", [
+      reportMergeKey.monitorCustomError,
+      parseError(error),
+    ]);
   });
 
   monitor.on("event", (...res) => {
     handle(res);
   });
 } catch (error) {
-  const stackTrace =
-    error instanceof Error ? ErrorStackParser.parse(error) : [];
-  const errorObj = {
-    msg: error instanceof Error ? error.message : "",
-    stackTrace: stringify(stackTrace),
-    errorType: "monitor-load-error",
-  };
-
-  observer.preEmit("monitor", [reportMergeKey.monitorLoadError, errorObj]);
+  observer.preEmit("monitor", [
+    reportMergeKey.monitorLoadError,
+    parseError(error),
+  ]);
 }
